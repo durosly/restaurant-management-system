@@ -906,7 +906,7 @@ function Home() {
 								/>
 							</g>
 						</svg>
-						<p>Place an order</p>
+						<p className="font-bold">Place an order</p>
 					</div>
 					<div className="flex-1 text-center">
 						<svg
@@ -2135,7 +2135,7 @@ function Home() {
 							</g>
 						</svg>
 
-						<p>Order preparation</p>
+						<p className="font-bold">Order preparation</p>
 					</div>
 					<div className="flex-1 text-center">
 						<svg
@@ -5821,7 +5821,7 @@ function Home() {
 							</g>
 						</svg>
 
-						<p>Delivery</p>
+						<p className="font-bold">Delivery</p>
 					</div>
 					<div className="flex-1 text-center">
 						<svg
@@ -7011,7 +7011,7 @@ function Home() {
 							</g>
 						</svg>
 
-						<p>Feedback</p>
+						<p className="font-bold">Feedback</p>
 					</div>
 				</div>
 			</div>
