@@ -19,12 +19,10 @@ function Home() {
 							With our tasty hot meal you can satify your cravings
 						</p>
 						<Link
-							href="/products"
-							passHref
+							href="/menu"
+							className="btn btn-primary"
 						>
-							<button className="btn btn-primary">
-								Order now
-							</button>
+							Order now
 						</Link>
 					</div>
 				</div>
