@@ -1,7 +1,7 @@
 import { SessionProvider } from "next-auth/react";
 import "../styles/globals.css";
 import useToast from "../hook/useToast";
-import AppContext from "../app/AppContext";
+import AppContext from "../store/AppContext";
 import Toast from "../components/layout/toast";
 
 export default function App({

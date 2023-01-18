@@ -1,16 +1,59 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import axios from "axios";
 import UserWrapper from "../components/layout/userWrapper";
+import AppContext from "../store/AppContext";
 
 function Signup() {
+	const {
+		toast: { showToast },
+	} = useContext(AppContext);
+	const router = useRouter();
+	const [isLoading, setIsLoading] = useState(false);
 	const [profile, setProfile] = useState({
 		firstname: "",
 		lastname: "",
 		email: "",
 		password: "",
 	});
+
+	// showToast({
+	// 	alert_type: "success",
+	// 	message: "signup successfull. Login to complete registration",
+	// });
+
+	async function handleSubmit(e) {
+		e.preventDefault();
+		setIsLoading(true);
+
+		// setShowAlert({ show: true, type: "warning", msg: "submitting..." });
+
+		try {
+			await axios.post("/api/customer/signup", profile);
+			showToast({
+				alert_type: "success",
+				message: "signup successfull. Login to complete registration",
+			});
+
+			let path = "/";
+
+			if (localStorage.getItem("D_PREVIOUS_HISTORY"))
+				path = localStorage.getItem("D_PREVIOUS_HISTORY");
+			setTimeout(() => router.push(path), 10000);
+
+			// console.log(response);
+			// setIsLoading(false);
+		} catch (error) {
+			console.log(error);
+			setIsLoading(false);
+			showToast({
+				alert_type: "danger",
+				message: error.response.data.msg,
+			});
+		}
+	}
+
 	return (
 		<UserWrapper>
 			<div className="hero min-h-screen bg-base-200">
@@ -23,7 +66,10 @@ function Signup() {
 							In deleniti eaque aut repudiandae et a id nisi.
 						</p>
 					</div>
-					<div className="card flex-shrink-0 w-full max-w-[50%] shadow-2xl bg-base-100">
+					<form
+						onSubmit={handleSubmit}
+						className="card flex-shrink-0 w-full max-w-[50%] shadow-2xl bg-base-100"
+					>
 						<div className="card-body">
 							<div className="form-control">
 								<label className="label">
@@ -86,7 +132,7 @@ function Signup() {
 									<span className="label-text">Password</span>
 								</label>
 								<input
-									type="text"
+									type="password"
 									placeholder="password"
 									className="input input-bordered"
 									name="password"
@@ -109,12 +155,18 @@ function Signup() {
 								</label>
 							</div>
 							<div className="form-control mt-6">
-								<button className="btn btn-primary">
-									Signup
+								<button
+									disabled={isLoading}
+									className={`btn btn-primary ${
+										isLoading &&
+										"btn-disabled animate-pulse"
+									}`}
+								>
+									{isLoading ? "Loading..." : "Signup"}
 								</button>
 							</div>
 						</div>
-					</div>
+					</form>
 				</div>
 			</div>
 		</UserWrapper>
