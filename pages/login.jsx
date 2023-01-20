@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 // import { getCsrfToken } from "next-auth/react";
 // import axios from "axios";
+import { withSessionSsr } from "../lib/withSession";
 import AppContext from "../store/AppContext";
 import UserWrapper from "../components/layout/userWrapper";
 import axios from "axios";
@@ -151,8 +152,21 @@ function Login() {
 
 export default Login;
 
-export async function getServerSideProps({ req, res }) {
-	try {
-		return { props: {} };
-	} catch (error) {}
-}
+export const getServerSideProps = withSessionSsr(
+	async function getServerSideProps({ req }) {
+		const user = req.session.user;
+
+		if (user) {
+			return {
+				redirect: {
+					destination: "/menu",
+					permanent: false,
+				},
+			};
+		}
+
+		return {
+			props: {},
+		};
+	}
+);
