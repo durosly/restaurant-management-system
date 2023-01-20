@@ -1,6 +1,45 @@
+import { useState, useContext } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import axios from "axios";
+import AppContext from "../../../../store/AppContext";
 
 function AdminWrapper({ children }) {
+	const {
+		toast: { showToast },
+	} = useContext(AppContext);
+
+	const router = useRouter();
+	const [isLoading, setIsLoading] = useState(false);
+
+	async function logout() {
+		setIsLoading(true);
+
+		if (isLoading) return;
+
+		try {
+			const status = await axios.post("/api/auth/logout");
+
+			if (status.data.ok) {
+				showToast({
+					alert_type: "success",
+					message: "Logout successful",
+				});
+
+				let path = "/admin";
+				router.push(path);
+			} else {
+				throw new Error("Invalid credentials");
+			}
+		} catch (error) {
+			setIsLoading(false);
+			showToast({
+				alert_type: "danger",
+				message: error.response.data.message,
+			});
+		}
+	}
+
 	return (
 		<div className="drawer drawer-mobile">
 			<input
@@ -99,7 +138,12 @@ function AdminWrapper({ children }) {
 						</Link>
 					</li>
 					<li>
-						<button className="btn btn-error mb-4">
+						<button
+							onClick={logout}
+							className={`btn btn-error mb-4 ${
+								isLoading && "btn-disabled animate-pulse"
+							}`}
+						>
 							<svg
 								className="h-5 w-5 fill-current"
 								xmlns="http://www.w3.org/2000/svg"
