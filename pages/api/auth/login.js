@@ -1,10 +1,12 @@
-import { withIronSessionApiRoute } from "iron-session/next";
+// import { withIronSessionApiRoute } from "iron-session/next";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
-import { sessionOptions } from "../../../lib/session";
+// import { sessionOptions } from "../../../lib/session";
+import { withSessionRoute } from "../../../lib/withSession";
 import UserModel from "../../../models/user";
 
-export default withIronSessionApiRoute(loginRoute, sessionOptions);
+// export default withIronSessionApiRoute(loginRoute, sessionOptions);
+export default withSessionRoute(loginRoute);
 
 async function loginRoute(req, res) {
 	try {
