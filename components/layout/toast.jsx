@@ -6,17 +6,16 @@ function Toast() {
 		toast: { isShown, alert_type, hideToast, message },
 	} = useContext(AppContext);
 
-	console.log(isShown, alert_type, message);
 	return (
 		<>
 			{isShown && (
 				<div className="toast toast-top">
 					<div
-						className={`alert alert-${
+						className={`alert ${
 							alert_type === "success"
-								? "success"
+								? "alert-success"
 								: alert_type === "danger"
-								? "error"
+								? "alert-error"
 								: ""
 						} shadow-lg`}
 					>
