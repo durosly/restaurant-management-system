@@ -125,7 +125,7 @@ export const getServerSideProps = withSessionSsr(
 		if (user && user.type === "admin") {
 			return {
 				redirect: {
-					destination: "/dashboard",
+					destination: "/admin/dashboard",
 					permanent: false,
 				},
 			};
