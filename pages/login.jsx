@@ -103,7 +103,7 @@ function Login() {
 										</span>
 									</label>
 									<input
-										type="text"
+										type="password"
 										placeholder="password"
 										className="input input-bordered"
 										name="password"
