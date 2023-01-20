@@ -1,14 +1,11 @@
 import { useState, useContext } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { signIn, getSession } from "next-auth/react";
 // import { getCsrfToken } from "next-auth/react";
 // import axios from "axios";
 import AppContext from "../store/AppContext";
 import UserWrapper from "../components/layout/userWrapper";
 import axios from "axios";
-import { unstable_getServerSession } from "next-auth/next";
-import { authOptions } from "../pages/api/auth/[...nextauth]";
 
 function Login() {
 	const router = useRouter();
@@ -156,11 +153,6 @@ export default Login;
 
 export async function getServerSideProps({ req, res }) {
 	try {
-		const session = await unstable_getServerSession(req, res, authOptions);
-
-		// const session = await getSession();
-		console.log(session);
-
 		return { props: {} };
 	} catch (error) {}
 }

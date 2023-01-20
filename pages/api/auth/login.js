@@ -1,43 +1,36 @@
 import { withIronSessionApiRoute } from "iron-session/next";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
+import { sessionOptions } from "../../../lib/session";
 import UserModel from "../../../models/user";
 
-export default withIronSessionApiRoute(
-	async function loginRoute(req, res) {
-		try {
-			mongoose.connect(process.env.MONGODB_URL);
-			// get user from database then:
+export default withIronSessionApiRoute(loginRoute, sessionOptions);
 
-			const { email, password } = req.body;
+async function loginRoute(req, res) {
+	try {
+		mongoose.connect(process.env.MONGODB_URL);
+		// get user from database then:
 
-			const user = await UserModel.findOne({ email });
+		const { email, password } = req.body;
 
-			if (!user) throw new Error("Invalid credentials");
+		const user = await UserModel.findOne({ email });
 
-			const compare = await bcrypt.compare(password, user.password);
+		if (!user) throw new Error("Invalid credentials");
 
-			if (!compare) throw new Error("Invalid credentials");
+		const compare = await bcrypt.compare(password, user.password);
 
-			req.session.user = {
-				id: user._id,
-				type: user.type,
-				firstname: user.firstname,
-				lastname: user.lastname,
-				email: user.email,
-			};
-			await req.session.save();
-			res.send({ ok: true });
-		} catch (error) {
-			res.status(400).send({ ok: false, message: error.message });
-		}
-	},
-	{
-		cookieName: process.env.IRON_SESSION_COOKIE_NAME,
-		password: process.env.IRON_SESSION_PASSWORD,
-		// secure: true should be used in production (HTTPS) but can't be used in development (HTTP)
-		cookieOptions: {
-			secure: process.env.NODE_ENV === "production",
-		},
+		if (!compare) throw new Error("Invalid credentials");
+
+		req.session.user = {
+			id: user._id,
+			type: user.type,
+			firstname: user.firstname,
+			lastname: user.lastname,
+			email: user.email,
+		};
+		await req.session.save();
+		res.send({ ok: true });
+	} catch (error) {
+		res.status(400).send({ ok: false, message: error.message });
 	}
-);
+}
