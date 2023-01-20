@@ -1,10 +1,10 @@
 import Footer from "./footer";
 import Header from "./header";
 
-function UserWrapper({ children }) {
+function UserWrapper({ children, user }) {
 	return (
 		<>
-			<Header />
+			<Header user={user} />
 			{children}
 			<Footer />
 		</>

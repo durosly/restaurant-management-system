@@ -37,11 +37,11 @@ function Login() {
 					message: "Login successful",
 				});
 
-				let path = "/";
+				let path = "/menu";
 
-				// if (localStorage.getItem("D_PREVIOUS_HISTORY"))
-				// 	path = localStorage.getItem("D_PREVIOUS_HISTORY");
-				// setTimeout(() => router.push(path), 10000);
+				if (localStorage.getItem("D_PREVIOUS_HISTORY"))
+					path = localStorage.getItem("D_PREVIOUS_HISTORY");
+				setTimeout(() => router.push(path), 3000);
 			} else {
 				throw new Error("Invalid credentials");
 			}

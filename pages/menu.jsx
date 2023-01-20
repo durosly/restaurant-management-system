@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { useState } from "react";
+import { withSessionSsr } from "../lib/withSession";
 import UserWrapper from "../components/layout/userWrapper";
 
-function Menu() {
+function Menu({ user }) {
 	const [menuItems, setMenuItems] = useState([
 		{
 			name: "Nice food",
@@ -55,7 +56,7 @@ function Menu() {
 	]);
 
 	return (
-		<UserWrapper>
+		<UserWrapper user={user}>
 			<div className="container mx-auto px-5 my-10">
 				<div className="text-center my-10">
 					<ul className="menu menu-horizontal bg-primary rounded-box">
@@ -70,7 +71,7 @@ function Menu() {
 						</li>
 					</ul>
 				</div>
-				<div className="flex flex-wrap gap-5">
+				<div className="flex flex-wrap gap-5 justify-center">
 					{menuItems &&
 						menuItems.length > 0 &&
 						menuItems.map((item, i) => (
@@ -160,3 +161,26 @@ function Menu() {
 }
 
 export default Menu;
+
+export const getServerSideProps = withSessionSsr(
+	async function getServerSideProps({ req }) {
+		const user = req.session.user;
+
+		// console.log(user, "user");
+
+		if (!user) {
+			return {
+				redirect: {
+					destination: "/login",
+					permanent: false,
+				},
+			};
+		}
+
+		return {
+			props: {
+				user: req.session.user,
+			},
+		};
+	}
+);

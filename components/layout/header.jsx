@@ -1,6 +1,44 @@
+import { useState, useContext } from "react";
 import Link from "next/link";
+import axios from "axios";
+import { useRouter } from "next/router";
+import AppContext from "../../store/AppContext";
 
-function Header() {
+function Header({ user }) {
+	const router = useRouter();
+	const [isLoading, setIsLoading] = useState(false);
+
+	const {
+		toast: { showToast },
+	} = useContext(AppContext);
+
+	async function logout() {
+		setIsLoading(true);
+
+		if (isLoading) return;
+
+		try {
+			const status = await axios.post("/api/auth/logout");
+
+			if (status.data.ok) {
+				showToast({
+					alert_type: "success",
+					message: "Logout successful",
+				});
+
+				let path = "/";
+				router.push(path);
+			} else {
+				throw new Error("Invalid credentials");
+			}
+		} catch (error) {
+			setIsLoading(false);
+			showToast({
+				alert_type: "danger",
+				message: error.response.data.message,
+			});
+		}
+	}
 	return (
 		<div className="navbar bg-base-100">
 			<div className="navbar-start">
@@ -77,12 +115,23 @@ function Header() {
 				</ul>
 			</div>
 			<div className="navbar-end">
-				<Link
-					className="btn"
-					href="/login"
-				>
-					Join Us
-				</Link>
+				{user?.email?.length > 0 ? (
+					<button
+						onClick={logout}
+						className={`btn btn-primary ${
+							isLoading && "btn-disabled animate-pulse"
+						}`}
+					>
+						Logout
+					</button>
+				) : (
+					<Link
+						className="btn"
+						href="/login"
+					>
+						Join Us
+					</Link>
+				)}
 				{/* <a className="btn">Get started</a> */}
 			</div>
 		</div>
