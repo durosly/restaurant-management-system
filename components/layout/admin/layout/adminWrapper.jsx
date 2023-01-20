@@ -12,6 +12,8 @@ function AdminWrapper({ children }) {
 	const router = useRouter();
 	const [isLoading, setIsLoading] = useState(false);
 
+	// console.log(router.pathname);
+
 	async function logout() {
 		setIsLoading(true);
 
@@ -52,7 +54,7 @@ function AdminWrapper({ children }) {
 				{children}
 				<label
 					htmlFor="my-drawer-2"
-					className="btn btn-primary drawer-button lg:hidden fixed bottom-5 left-5"
+					className="btn btn-sm btn-primary drawer-button lg:hidden fixed bottom-5 left-5 z-30"
 				>
 					<svg
 						className="w-5 h-5 fill-current"
