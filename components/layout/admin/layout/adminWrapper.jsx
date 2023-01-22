@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import axios from "axios";
 import AppContext from "../../../../store/AppContext";
+import BreadCrumb from "../bread-crumb";
 
 function AdminWrapper({ children }) {
 	const {
@@ -51,7 +52,10 @@ function AdminWrapper({ children }) {
 			/>
 			<div className="drawer-content">
 				{/* <!-- Page content here --> */}
-				{children}
+				<div className="container px-5 space-y-5 mb-10">
+					<BreadCrumb />
+					{children}
+				</div>
 				<label
 					htmlFor="my-drawer-2"
 					className="btn btn-sm btn-primary drawer-button lg:hidden fixed bottom-5 left-5 z-30"

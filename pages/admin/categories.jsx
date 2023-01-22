@@ -4,6 +4,7 @@ import AppContext from "../../store/AppContext";
 import AdminWrapper from "../../components/layout/admin/layout/adminWrapper";
 import { withSessionSsr } from "../../lib/withSession";
 import CategoryModel from "../../models/category";
+import BreadCrumb from "../../components/layout/admin/bread-crumb";
 
 function Categories({ categoriesData }) {
 	const {
@@ -101,198 +102,140 @@ function Categories({ categoriesData }) {
 
 	return (
 		<AdminWrapper>
-			<div className="container px-5 space-y-5 mb-10">
-				<div className="text-sm breadcrumbs">
-					<ul>
-						<li>
-							<a>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									className="w-4 h-4 mr-2 stroke-current"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-									></path>
-								</svg>
-								Home
-							</a>
-						</li>
-						<li>
-							<a>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									className="w-4 h-4 mr-2 stroke-current"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-									></path>
-								</svg>
-								Documents
-							</a>
-						</li>
-						<li>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								className="w-4 h-4 mr-2 stroke-current"
-							>
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth="2"
-									d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-								></path>
-							</svg>
-							Add Document
-						</li>
-					</ul>
-				</div>
-				<form
-					onSubmit={addCategory}
-					action="/admin/categories/add"
-					className="bg-slate-700 px-5 py-5 mx-auto rounded-lg"
-				>
-					<h2 className="mb-4">Add new category</h2>
-					<div className="flex gap-x-4">
-						<input
-							type="text"
-							placeholder="Type here"
-							className="input w-full max-w-xs"
-							value={newCategory}
-							onChange={(e) => setNewCategory(e.target.value)}
-						/>
-						<button
-							disabled={isLoading}
-							className={`btn btn-primary ${
-								isLoading && "btn-disabled animate-pulse"
-							}`}
+			<form
+				onSubmit={addCategory}
+				action="/admin/categories/add"
+				className="bg-slate-700 px-5 py-5 mx-auto rounded-lg"
+			>
+				<h2 className="mb-4">Add new category</h2>
+				<div className="flex gap-x-4">
+					<input
+						type="text"
+						placeholder="Type here"
+						className="input w-full max-w-xs"
+						value={newCategory}
+						onChange={(e) => setNewCategory(e.target.value)}
+					/>
+					<button
+						disabled={isLoading}
+						className={`btn btn-primary ${
+							isLoading && "btn-disabled animate-pulse"
+						}`}
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width={24}
+							height={24}
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							strokeWidth={2}
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							className="feather feather-plus"
 						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width={24}
-								height={24}
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								strokeWidth={2}
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								className="feather feather-plus"
-							>
-								<line
-									x1={12}
-									y1={5}
-									x2={12}
-									y2={19}
-								/>
-								<line
-									x1={5}
-									y1={12}
-									x2={19}
-									y2={12}
-								/>
-							</svg>
-						</button>
-					</div>
-				</form>
-				<div className="overflow-x-auto">
-					<table className="table w-full">
-						{/* <!-- head --> */}
-						<thead>
-							<tr>
-								<th></th>
-								<th>Name</th>
-								<th>Number of Items</th>
-								<th>Action</th>
-							</tr>
-						</thead>
-						<tbody>
-							{categories.map((item, i) => (
-								<tr key={item.id}>
-									<th>{i + 1}</th>
-									<td>{item.name}</td>
-									<td>
-										<span className="badge badge-primary">
-											{item.numberOfFood}
-										</span>
-									</td>
-									<td>
-										<button
-											disabled={isDeleting}
-											onClick={() =>
-												deleteCategory({ id: item.id })
-											}
-											className={`btn btn-sm btn-error ${
-												deletingId === item.id &&
-												isDeleting &&
-												"btn-disabled"
-											}`}
-										>
-											{deletingId === item.id &&
-											isDeleting ? (
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													width={24}
-													height={24}
-													viewBox="0 0 24 24"
-													fill="none"
-													stroke="currentColor"
-													strokeWidth={2}
-													strokeLinecap="round"
-													strokeLinejoin="round"
-													className="w-h h-4 animate-spin"
-												>
-													<polyline points="23 4 23 10 17 10" />
-													<path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
-												</svg>
-											) : (
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													width={24}
-													height={24}
-													viewBox="0 0 24 24"
-													fill="none"
-													stroke="currentColor"
-													strokeWidth={2}
-													strokeLinecap="round"
-													strokeLinejoin="round"
-													className="h-4 w-4"
-													// className="feather feather-trash-2"
-												>
-													<polyline points="3 6 5 6 21 6" />
-													<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-													<line
-														x1={10}
-														y1={11}
-														x2={10}
-														y2={17}
-													/>
-													<line
-														x1={14}
-														y1={11}
-														x2={14}
-														y2={17}
-													/>
-												</svg>
-											)}
-										</button>
-									</td>
-								</tr>
-							))}
-						</tbody>
-					</table>
+							<line
+								x1={12}
+								y1={5}
+								x2={12}
+								y2={19}
+							/>
+							<line
+								x1={5}
+								y1={12}
+								x2={19}
+								y2={12}
+							/>
+						</svg>
+					</button>
 				</div>
+			</form>
+			<div className="overflow-x-auto">
+				<table className="table w-full">
+					{/* <!-- head --> */}
+					<thead>
+						<tr>
+							<th></th>
+							<th>Name</th>
+							<th>Number of Items</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						{categories.map((item, i) => (
+							<tr key={item.id}>
+								<th>{i + 1}</th>
+								<td>{item.name}</td>
+								<td>
+									<span className="badge badge-primary">
+										{item.numberOfFood}
+									</span>
+								</td>
+								<td>
+									<button
+										disabled={isDeleting}
+										onClick={() =>
+											deleteCategory({ id: item.id })
+										}
+										className={`btn btn-sm btn-error ${
+											deletingId === item.id &&
+											isDeleting &&
+											"btn-disabled"
+										}`}
+									>
+										{deletingId === item.id &&
+										isDeleting ? (
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												width={24}
+												height={24}
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												strokeWidth={2}
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												className="w-h h-4 animate-spin"
+											>
+												<polyline points="23 4 23 10 17 10" />
+												<path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+											</svg>
+										) : (
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												width={24}
+												height={24}
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												strokeWidth={2}
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												className="h-4 w-4"
+												// className="feather feather-trash-2"
+											>
+												<polyline points="3 6 5 6 21 6" />
+												<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+												<line
+													x1={10}
+													y1={11}
+													x2={10}
+													y2={17}
+												/>
+												<line
+													x1={14}
+													y1={11}
+													x2={14}
+													y2={17}
+												/>
+											</svg>
+										)}
+									</button>
+								</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
 			</div>
 		</AdminWrapper>
 	);
