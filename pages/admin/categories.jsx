@@ -4,7 +4,6 @@ import AppContext from "../../store/AppContext";
 import AdminWrapper from "../../components/layout/admin/layout/adminWrapper";
 import { withSessionSsr } from "../../lib/withSession";
 import CategoryModel from "../../models/category";
-import BreadCrumb from "../../components/layout/admin/bread-crumb";
 
 function Categories({ categoriesData }) {
 	const {
