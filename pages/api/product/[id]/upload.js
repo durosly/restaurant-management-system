@@ -55,7 +55,9 @@ async function handler(req, res) {
 				});
 			});
 
-			console.log(productId);
+			// console.log(productId);
+
+			const files = [];
 
 			for (const img in fData.files) {
 				const file = fData.files[img];
@@ -64,10 +66,11 @@ async function handler(req, res) {
 				await FoodModel.findByIdAndUpdate(productId, {
 					$addToSet: { images: filename },
 				});
+				files.push(filename);
 				// console.log(file);
 			}
 
-			res.status(200).json({ ok: true, msg: "nice" });
+			res.status(200).json({ ok: true, msg: "nice", files });
 		} catch (error) {
 			res.status(401).json({ ok: false, msg: error.message });
 		}
