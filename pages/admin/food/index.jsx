@@ -1,11 +1,11 @@
 import { useState, useContext } from "react";
 import Link from "next/link";
 import axios from "axios";
-import AppContext from "../../store/AppContext";
-import AdminWrapper from "../../components/layout/admin/layout/adminWrapper";
-import { withSessionSsr } from "../../lib/withSession";
-import CategoryModel from "../../models/category";
-import FoodModel from "../../models/food";
+import AppContext from "../../../store/AppContext";
+import AdminWrapper from "../../../components/layout/admin/layout/adminWrapper";
+import { withSessionSsr } from "../../../lib/withSession";
+import CategoryModel from "../../../models/category";
+import FoodModel from "../../../models/food";
 
 function Food({ categoriesData, food }) {
 	const {
