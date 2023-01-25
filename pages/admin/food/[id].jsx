@@ -6,6 +6,7 @@ import AppContext from "../../../store/AppContext";
 import AdminWrapper from "../../../components/layout/admin/layout/adminWrapper";
 import FileUpload from "../../../components/layout/admin/file-upload";
 import ProductInfo from "../../../components/layout/admin/product-info";
+import AvailableStock from "../../../components/layout/admin/available-stock";
 
 function FoodDetails() {
 	return (
@@ -16,23 +17,7 @@ function FoodDetails() {
 
 				<ProductInfo />
 				<div className="divider">Available Stock</div>
-				<form>
-					<div className="form-control w-full max-w-xs">
-						<label className="label">
-							<span className="label-text">
-								Number of available item
-							</span>
-						</label>
-						<input
-							type="number"
-							placeholder="Type here"
-							className="input input-bordered w-full max-w-xs"
-						/>
-					</div>
-					<button className="btn btn-primary mt-5">
-						Update Count
-					</button>
-				</form>
+				<AvailableStock />
 
 				<div className="divider">Rating / Reviews</div>
 
