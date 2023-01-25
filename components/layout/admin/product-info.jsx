@@ -18,6 +18,7 @@ function ProductInfo() {
 		price: null,
 	});
 	const [categories, setCategories] = useState([]);
+	const [isUpdating, setIsUpdating] = useState(false);
 
 	function toggleCategory({ id }) {
 		if (info._categoriesIds.includes(id)) {
@@ -28,6 +29,41 @@ function ProductInfo() {
 				...info,
 				_categoriesIds: [...info._categoriesIds, id],
 			});
+		}
+	}
+
+	async function updateInfo(e) {
+		e.preventDefault();
+		if (isUpdating) return;
+		setIsUpdating(true);
+		try {
+			const response = await axios.put(
+				`/api/product/${productId}/update-info`,
+				info
+			);
+			// console.log(response.data);
+
+			if (response.data.ok) {
+				showToast({
+					alert_type: "success",
+					message: response.data.msg,
+				});
+				setIsUpdating(false);
+			}
+		} catch (error) {
+			let errorMsg = "";
+
+			if (error?.response) {
+				errorMsg = error.response.data.msg;
+			} else {
+				errorMsg = error.message;
+			}
+
+			showToast({
+				alert_type: "danger",
+				message: errorMsg,
+			});
+			setIsUpdating(false);
 		}
 	}
 
@@ -68,7 +104,10 @@ function ProductInfo() {
 	}, [productId]);
 
 	return (
-		<form>
+		<form
+			action="/update-info"
+			onSubmit={updateInfo}
+		>
 			<div className="form-control w-full max-w-xs">
 				<label className="label">
 					<span className="label-text">Name</span>
@@ -165,7 +204,14 @@ function ProductInfo() {
 					// }
 				/>
 			</div>
-			<button className="btn btn-primary mt-5">Update Item</button>
+			<button
+				disabled={isUpdating}
+				className={`btn btn-primary mt-5 ${
+					isUpdating && "animate-pulse"
+				}`}
+			>
+				{isUpdating ? "Updating..." : "Update Item"}
+			</button>
 		</form>
 	);
 }

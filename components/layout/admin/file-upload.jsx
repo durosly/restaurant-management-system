@@ -26,7 +26,7 @@ function FileUpload() {
 					`/api/product/${productId}/get-images`
 				);
 
-				console.log(productId);
+				// console.log(productId);
 
 				if (response.data.ok) {
 					// console.log(response.data);
@@ -68,6 +68,10 @@ function FileUpload() {
 			if (response.data.ok) {
 				const newProductImages = productImages.filter((i) => i !== img);
 				setProductImages(newProductImages);
+				showToast({
+					alert_type: "success",
+					message: "Image removed successfully",
+				});
 			} else {
 				throw new Error(response.data.msg);
 			}
