@@ -164,12 +164,16 @@ function FileUpload() {
 						className="object-cover"
 						fill
 						src={`/products/${productImages[0]}`}
+						sizes="80vw"
+						alt=""
 					/>
 				) : (
 					<Image
 						className="object-cover"
 						fill
 						src={"/images/placeholder-temp.gif"}
+						sizes="80vw"
+						alt=""
 					/>
 				)}
 			</div>
@@ -184,6 +188,8 @@ function FileUpload() {
 								className="object-cover"
 								fill
 								src={`/products/${img}`}
+								sizes="30vw"
+								alt=""
 							/>
 							<button
 								onClick={() => deleteImage({ img })}
