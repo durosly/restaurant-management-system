@@ -176,7 +176,7 @@ function Food({ categoriesData, food }) {
 				<div className="form-control flex-row gap-4 my-5 flex-wrap">
 					{categories.map((c) => (
 						<label
-							key={c.id}
+							key={c._id}
 							className="flex justify-center gap-2"
 							htmlFor={`${c.name}-${c._id}`}
 						>

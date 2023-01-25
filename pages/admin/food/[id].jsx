@@ -5,6 +5,7 @@ import axios from "axios";
 import AppContext from "../../../store/AppContext";
 import AdminWrapper from "../../../components/layout/admin/layout/adminWrapper";
 import FileUpload from "../../../components/layout/admin/file-upload";
+import ProductInfo from "../../../components/layout/admin/product-info";
 
 function FoodDetails() {
 	return (
@@ -13,123 +14,7 @@ function FoodDetails() {
 				<FileUpload />
 				<div className="divider">Item Information</div>
 
-				<form>
-					<div className="form-control w-full max-w-xs">
-						<label className="label">
-							<span className="label-text">Name</span>
-						</label>
-						<input
-							type="text"
-							placeholder="Type here"
-							className="input input-bordered w-full max-w-xs"
-							disabled
-						/>
-					</div>
-					<div className="form-control w-full max-w-xs">
-						<label className="label">
-							<span className="label-text">
-								Price per portion / item (&#8358;)
-							</span>
-						</label>
-						<input
-							type="number"
-							placeholder="Type here"
-							className="input input-bordered w-full max-w-xs"
-						/>
-					</div>
-					<div className="form-control w-full max-w-xs">
-						<label
-							htmlFor=""
-							className="label"
-						>
-							<span className="label-text">Available</span>
-							<input
-								type="checkbox"
-								className="toggle toggle-success"
-								// checked
-							/>
-						</label>
-					</div>
-					<div className="form-control flex-row gap-4 my-5 flex-wrap">
-						<label
-							// key={c.id}
-							className="flex justify-center gap-2"
-							htmlFor={``}
-						>
-							<span>Food</span>
-							<input
-								// id={`${c.name}-${c._id}`}
-								type="checkbox"
-								// checked={foodDetails.categories.includes(c._id)}
-								className="checkbox"
-								name="category"
-								// onChange={() => toggleCategory({ id: c._id })}
-							/>
-						</label>
-						<label
-							// key={c.id}
-							className="flex justify-center gap-2"
-							htmlFor={``}
-						>
-							<span>Food</span>
-							<input
-								// id={`${c.name}-${c._id}`}
-								type="checkbox"
-								// checked={foodDetails.categories.includes(c._id)}
-								className="checkbox"
-								name="category"
-								// onChange={() => toggleCategory({ id: c._id })}
-							/>
-						</label>
-						<label
-							// key={c.id}
-							className="flex justify-center gap-2"
-							htmlFor={``}
-						>
-							<span>Food</span>
-							<input
-								// id={`${c.name}-${c._id}`}
-								type="checkbox"
-								// checked={foodDetails.categories.includes(c._id)}
-								className="checkbox"
-								name="category"
-								// onChange={() => toggleCategory({ id: c._id })}
-							/>
-						</label>
-					</div>
-					<div className="form-control w-full max-w-xs">
-						<label className="label">
-							<span className="label-text">Short Summary</span>
-						</label>
-						<input
-							type="text"
-							placeholder="Type here"
-							className="input input-bordered w-full max-w-xs"
-							disabled
-						/>
-					</div>
-					<div className="form-control">
-						<label className="label">
-							<span className="label-text">Description</span>
-						</label>
-						<textarea
-							className="textarea textarea-bordered h-24"
-							placeholder="Bio"
-							name="desc"
-							disabled
-							// value={foodDetails.desc}
-							// onChange={(e) =>
-							// 	setFoodDetails({
-							// 		...foodDetails,
-							// 		[e.target.name]: e.target.value,
-							// 	})
-							// }
-						/>
-					</div>
-					<button className="btn btn-primary mt-5">
-						Update Item
-					</button>
-				</form>
+				<ProductInfo />
 				<div className="divider">Available Stock</div>
 				<form>
 					<div className="form-control w-full max-w-xs">
