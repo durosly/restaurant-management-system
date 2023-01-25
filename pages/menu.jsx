@@ -1,88 +1,96 @@
+import { useState, useEffect, useContext } from "react";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import axios from "axios";
 import { withSessionSsr } from "../lib/withSession";
 import UserWrapper from "../components/layout/userWrapper";
+import CategoryModel from "../models/category";
+import AppContext from "../store/AppContext";
+import Image from "next/image";
 
-function Menu({ user }) {
-	const [menuItems, setMenuItems] = useState([
-		{
-			name: "Nice food",
-			img: "https://placeimg.com/400/225/arch",
-			desc: "A very interesting me",
-			rating: 5,
-			price: 7000,
-			inCart: false,
-		},
-		{
-			name: "Nice food",
-			img: "https://placeimg.com/400/225/arch",
-			desc: "A very interesting me",
-			rating: 3,
-			price: 700,
-			inCart: false,
-		},
-		{
-			name: "Nice food",
-			img: "https://placeimg.com/400/225/arch",
-			desc: "A very interesting me",
-			rating: 5,
-			price: 6000,
-			inCart: true,
-		},
-		{
-			name: "Nice food",
-			img: "https://placeimg.com/400/225/arch",
-			desc: "A very interesting me",
-			rating: 5,
-			price: 7000,
-			inCart: false,
-		},
-		{
-			name: "Nice food",
-			img: "https://placeimg.com/400/225/arch",
-			desc: "A very interesting me",
-			rating: 2,
-			price: 7000,
-			inCart: false,
-		},
-		{
-			name: "Nice food",
-			img: "https://placeimg.com/400/225/arch",
-			desc: "A very interesting me",
-			rating: 5,
-			price: 7000,
-			inCart: false,
-		},
-	]);
+function Menu({ user, categories }) {
+	const router = useRouter();
+	const {
+		toast: { showToast },
+	} = useContext(AppContext);
+	// console.log(router);
+	const { category } = router.query;
+	const [menuItems, setMenuItems] = useState([]);
+	const [isLoading, setIsLoading] = useState(false);
+
+	useEffect(() => {
+		async function loadProduct() {
+			let query = "/api/product/get-by-category";
+			// console.log(category);
+			if (category) {
+				// console.log(category);
+				query += `?category=${category}`;
+			}
+			try {
+				const response = await axios(query);
+				if (response.data.ok) {
+					// console.log(response.data);
+					setMenuItems(response.data.products);
+				} else {
+					throw new Error(response.data.msg);
+				}
+			} catch (error) {
+				let errorMsg = "";
+
+				if (error?.response) {
+					errorMsg = error.response.data.msg;
+				} else {
+					errorMsg = error.message;
+				}
+				console.log(error);
+				setIsLoading(false);
+				showToast({
+					alert_type: "danger",
+					message: errorMsg,
+				});
+			}
+		}
+
+		loadProduct();
+	}, [category]);
 
 	return (
 		<UserWrapper user={user}>
 			<div className="container mx-auto px-5 my-10">
 				<div className="text-center my-10">
-					<ul className="menu menu-horizontal bg-primary rounded-box">
+					<ul className="menu menu-vertical md:menu-horizontal bg-primary rounded-box">
 						<li>
-							<a>Food</a>
+							<Link href="/menu">All</Link>
 						</li>
-						<li>
-							<a>Drink</a>
-						</li>
-						<li>
-							<a>Snacks</a>
-						</li>
+						{categories &&
+							categories.length > 0 &&
+							categories.map((c) => (
+								<li>
+									<Link
+										key={c._id}
+										href={`/menu?category=${c._id}`}
+									>
+										{c.name}
+									</Link>
+								</li>
+							))}
 					</ul>
 				</div>
 				<div className="flex flex-wrap gap-5 justify-center">
 					{menuItems &&
 						menuItems.length > 0 &&
-						menuItems.map((item, i) => (
+						menuItems.map((item) => (
 							<div
-								key={i}
+								key={item._id}
 								className="card w-96 bg-base-100 shadow-xl"
 							>
-								<figure>
-									<img
-										src={item.img}
+								<figure className="relative h-52">
+									<Image
+										className="object-cover"
+										src={`/products/${item.images[0]}`}
 										alt={item.name}
+										fill
+										sizes="30vw"
 									/>
 								</figure>
 								<div className="card-body">
@@ -94,36 +102,34 @@ function Menu({ user }) {
 									</h2>
 									<p>{item.desc}</p>
 									<div className="rating">
-										{new Array(item.rating)
-											.fill(0)
-											.map((item, i) => {
-												if (i + 1 === item.rating) {
-													return (
-														<input
-															type="radio"
-															name="rating-2"
-															className="mask mask-star-2 bg-orange-400"
-															// checked={item.rating === 1}
-															checked
-															key={i}
-														/>
-													);
-												} else {
-													return (
-														<input
-															type="radio"
-															name="rating-2"
-															className="mask mask-star-2 bg-orange-400"
-															key={i}
-														/>
-													);
-												}
-											})}
+										{new Array(3).fill(0).map((item, i) => {
+											if (i + 1 === item?.rating) {
+												return (
+													<input
+														type="radio"
+														name="rating-2"
+														className="mask mask-star-2 bg-orange-400"
+														// checked={item.rating === 1}
+														checked
+														key={i}
+													/>
+												);
+											} else {
+												return (
+													<input
+														type="radio"
+														name="rating-2"
+														className="mask mask-star-2 bg-orange-400"
+														key={i}
+													/>
+												);
+											}
+										})}
 									</div>
 									<div className="card-actions justify-end">
 										<button
 											className={`btn btn-sm ${
-												item.inCart
+												item?.inCart
 													? "glass"
 													: "btn-primary"
 											} gap-2`}
@@ -139,7 +145,7 @@ function Menu({ user }) {
 										</button>
 										<Link
 											className="btn btn-sm btn-secondary gap-2"
-											href={`/menu/item/${item.name}`}
+											href={`/menu/item/${item._id}`}
 										>
 											<svg
 												className="w-5 h-5"
@@ -177,9 +183,12 @@ export const getServerSideProps = withSessionSsr(
 		// 	};
 		// }
 
+		const categories = await CategoryModel.find({});
+
 		return {
 			props: {
 				user: req?.session?.user || null,
+				categories: JSON.parse(JSON.stringify(categories)),
 			},
 		};
 	}
