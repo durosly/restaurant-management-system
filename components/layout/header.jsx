@@ -1,13 +1,16 @@
 import { useState, useContext } from "react";
 import Link from "next/link";
 import axios from "axios";
+import { useCart } from "react-use-cart";
 import { useRouter } from "next/router";
 import AppContext from "../../store/AppContext";
 
 function Header({ user }) {
 	const router = useRouter();
 	const [isLoading, setIsLoading] = useState(false);
+	const { totalUniqueItems } = useCart();
 
+	// console.log("user", user);
 	const {
 		toast: { showToast },
 	} = useContext(AppContext);
@@ -77,7 +80,7 @@ function Header({ user }) {
 						</li>
 					</ul>
 				</div>
-				<a className="btn btn-ghost normal-case text-xl">daisyUI</a>
+				<a className="btn btn-ghost normal-case text-xl">DSpecials</a>
 			</div>
 			<div className="navbar-center hidden lg:flex">
 				<ul className="menu menu-horizontal px-1">
@@ -97,9 +100,14 @@ function Header({ user }) {
 						>
 							<span className="indicator-item indicator-middle badge badge-secondary">
 								<span className="countdown">
-									<span style={{ "--value": 6 }}></span>
+									<span
+										style={{
+											"--value": totalUniqueItems,
+										}}
+									></span>
 								</span>
 							</span>
+
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								viewBox="0 0 576 512"

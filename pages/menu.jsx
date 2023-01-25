@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { useCart } from "react-use-cart";
 import { withSessionSsr } from "../lib/withSession";
 import UserWrapper from "../components/layout/userWrapper";
 import CategoryModel from "../models/category";
@@ -13,7 +14,9 @@ function Menu({ user, categories }) {
 	const {
 		toast: { showToast },
 	} = useContext(AppContext);
+	const { addItem, inCart, removeItem } = useCart();
 	// console.log(router);
+	// console.log(inCart("nice"), "in-cart");
 	const { category } = router.query;
 	const [menuItems, setMenuItems] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
@@ -77,6 +80,11 @@ function Menu({ user, categories }) {
 					</ul>
 				</div>
 				<div className="flex flex-wrap gap-5 justify-center">
+					{isLoading && (
+						<div className="w-10 h-10 bg-slate-700 animate-pulse">
+							Loading...
+						</div>
+					)}
 					{menuItems &&
 						menuItems.length > 0 &&
 						menuItems.map((item) => (
@@ -129,10 +137,20 @@ function Menu({ user, categories }) {
 									<div className="card-actions justify-end">
 										<button
 											className={`btn btn-sm ${
-												item?.inCart
+												inCart(item._id) === true
 													? "glass"
 													: "btn-primary"
 											} gap-2`}
+											onClick={
+												inCart(item._id) === true
+													? () => removeItem(item._id)
+													: () =>
+															addItem({
+																name: item.name,
+																id: item._id,
+																price: item.price,
+															})
+											}
 										>
 											<svg
 												className="w-5 h-5"
@@ -170,9 +188,9 @@ export default Menu;
 
 export const getServerSideProps = withSessionSsr(
 	async function getServerSideProps({ req }) {
-		// const user = req.session.user;
+		const user = req.session.user;
 
-		// console.log(user, "user");
+		console.log(user, "user");
 
 		// if (!user) {
 		// 	return {
