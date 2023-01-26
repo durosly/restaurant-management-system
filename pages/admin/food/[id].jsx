@@ -1,8 +1,3 @@
-import { useState, useEffect, useContext } from "react";
-import { useRouter } from "next/router";
-import Image from "next/image";
-import axios from "axios";
-import AppContext from "../../../store/AppContext";
 import AdminWrapper from "../../../components/layout/admin/layout/adminWrapper";
 import FileUpload from "../../../components/layout/admin/file-upload";
 import ProductInfo from "../../../components/layout/admin/product-info";

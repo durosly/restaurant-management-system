@@ -163,7 +163,7 @@ function Menu({ user, categories }) {
 										</button>
 										<Link
 											className="btn btn-sm btn-secondary gap-2"
-											href={`/menu/item/${item._id}`}
+											href={`/product/${item._id}`}
 										>
 											<svg
 												className="w-5 h-5"
