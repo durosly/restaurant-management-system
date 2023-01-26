@@ -1,6 +1,7 @@
 import Image from "next/image";
 import UserWrapper from "../../components/layout/userWrapper";
 import DisplayImages from "../../components/product-details/display-images";
+import ProductInfo from "../../components/product-details/product-info";
 import { withSessionSsr } from "../../lib/withSession";
 
 function ProductDetails({ user }) {
@@ -9,60 +10,7 @@ function ProductDetails({ user }) {
 			<div className="container mx-auto px-5 my-10">
 				<DisplayImages />
 				<div className="divider">Details</div>
-				<div className="space-y-5">
-					<div className="flex flex-wrap gap-10 items-center">
-						<h2 className="text-xl">Chicken Vege</h2>
-						<span className="text-4xl text-white">
-							&#8358;3,000.00
-						</span>
-					</div>
-					<p>
-						Lorem ipsum dolor sit amet consectetur adipisicing elit.
-						Adipisci, necessitatibus?
-					</p>
-					<div className="flex gap-4">
-						<div className="badge badge-info gap-2 py-4">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								strokeWidth={2}
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								className="w-4 h-4"
-							>
-								<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-							</svg>
-							4.5
-						</div>
-						<div className="badge badge-info gap-2 py-4">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								strokeWidth={2}
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								className="w-4 h-4"
-							>
-								<circle
-									cx={12}
-									cy={12}
-									r={10}
-								/>
-								<polyline points="12 6 12 12 16 14" />
-							</svg>
-							30 - 40 min
-						</div>
-					</div>
-					<button className="btn btn-primary">Add to cart</button>
-					<div className="shadow-2xl rounded-md px-5 py-2">
-						<h2>Details</h2>
-						<pre>- nice - fresh - grow</pre>
-					</div>
-				</div>
+				<ProductInfo />
 				<div className="divider">Reviews</div>
 				<div>
 					<div className="chat chat-start">
