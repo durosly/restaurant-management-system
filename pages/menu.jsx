@@ -149,6 +149,10 @@ function Menu({ user, categories }) {
 																name: item.name,
 																id: item._id,
 																price: item.price,
+																img: item
+																	.images[0],
+																summary:
+																	item.short_summary,
 															})
 											}
 										>
