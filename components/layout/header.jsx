@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import Link from "next/link";
 import axios from "axios";
 import { useCart } from "react-use-cart";
@@ -9,8 +9,12 @@ function Header({ user }) {
 	const router = useRouter();
 	const [isLoading, setIsLoading] = useState(false);
 	const { totalUniqueItems } = useCart();
+	const [count, setCount] = useState(0);
 
 	// console.log("user", user);
+	// console.log(totalUniqueItems, "items");
+
+	useEffect(() => setCount(totalUniqueItems), [totalUniqueItems]);
 	const {
 		toast: { showToast },
 	} = useContext(AppContext);
@@ -99,13 +103,7 @@ function Header({ user }) {
 							className="indicator"
 						>
 							<span className="indicator-item indicator-middle badge badge-secondary">
-								<span className="countdown">
-									<span
-										style={{
-											"--value": totalUniqueItems,
-										}}
-									></span>
-								</span>
+								{count}
 							</span>
 
 							<svg

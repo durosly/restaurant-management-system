@@ -1,6 +1,6 @@
 // import { withIronSessionApiRoute } from "iron-session/next";
 import bcrypt from "bcryptjs";
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 // import { sessionOptions } from "../../../lib/session";
 import { withSessionRoute } from "../../../lib/withSession";
 import UserModel from "../../../models/user";
@@ -10,7 +10,7 @@ export default withSessionRoute(loginRoute);
 
 async function loginRoute(req, res) {
 	try {
-		mongoose.connect(process.env.MONGODB_URL);
+		// mongoose.connect(process.env.MONGODB_URL);
 		// get user from database then:
 
 		const { email, password } = req.body;
