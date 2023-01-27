@@ -190,22 +190,11 @@ export const getServerSideProps = withSessionSsr(
 	async function getServerSideProps({ req }) {
 		const user = req.session.user;
 
-		console.log(user, "user");
-
-		// if (!user) {
-		// 	return {
-		// 		redirect: {
-		// 			destination: "/login",
-		// 			permanent: false,
-		// 		},
-		// 	};
-		// }
-
 		const categories = await CategoryModel.find({});
 
 		return {
 			props: {
-				user: req?.session?.user || null,
+				user: user || null,
 				categories: JSON.parse(JSON.stringify(categories)),
 			},
 		};
