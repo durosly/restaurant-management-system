@@ -165,6 +165,7 @@ function Cart() {
 							<Link
 								href="/checkout"
 								className="btn btn-primary gap-2"
+								disabled={data.isEmpty}
 							>
 								<svg
 									className="w-5 h-5 fill-current"
