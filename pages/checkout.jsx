@@ -1,10 +1,105 @@
+import { useState, useEffect, useContext } from "react";
+import { useRouter } from "next/router";
+import { useCart } from "react-use-cart";
+import { usePaystackPayment } from "react-paystack";
+import axios from "axios";
 import UserWrapper from "../components/layout/userWrapper";
+import { withSessionSsr } from "../lib/withSession";
+import AppContext from "../store/AppContext";
 
-function Checkout() {
+function Checkout({ user }) {
+	const router = useRouter();
+	const [isLoading, setIsLoading] = useState(false);
+	const { isEmpty, items, cartTotal, emptyCart } = useCart();
+	const {
+		toast: { showToast },
+	} = useContext(AppContext);
+	const [data, setData] = useState({
+		method_of_delivery: "",
+		method_of_payment: "",
+		address: "",
+		reference: new Date().getTime().toString(),
+		items,
+		total: cartTotal,
+	});
+
+	const config = {
+		reference: new Date().getTime().toString(),
+		email: user.email,
+		amount: cartTotal * 100,
+		publicKey: "pk_test_1595d971481e77bb7ac48baa7b9b6d8c8730c70f",
+	};
+
+	const initializePayment = usePaystackPayment(config);
+
+	const [paymentComplete, setPaymentComplete] = useState(false);
+
+	function onSuccess() {
+		setPaymentComplete(true);
+		createCheckout();
+	}
+
+	function onClose() {
+		showToast({
+			alert_type: "danger",
+			message: "Payment process was not completed",
+		});
+	}
+
+	useEffect(() => {
+		if (isEmpty) router.push("/menu");
+	}, []);
+
+	function checkout() {
+		if (data.method_of_payment === "pay-now") {
+			initializePayment(onSuccess, onClose);
+		} else if (data.method_of_payment === "pay-cash") {
+			createCheckout();
+		} else {
+			showToast({
+				alert_type: "danger",
+				message: "Select a payment method",
+			});
+		}
+	}
+
+	async function createCheckout() {
+		if (isLoading) return;
+
+		setIsLoading(true);
+		try {
+			const response = await axios.post("/api/order/create", data);
+			if (response.data.ok) {
+				showToast({
+					alert_type: "success",
+					message: "Order created",
+				});
+				emptyCart();
+				router.push("/order");
+			} else {
+				throw new Error(response.data.msg);
+			}
+		} catch (error) {
+			let errorMsg = "";
+
+			if (error?.response) {
+				errorMsg = error.response.data.msg;
+			} else {
+				errorMsg = error.message;
+			}
+
+			showToast({
+				alert_type: "danger",
+				message: errorMsg,
+			});
+			setIsLoading(false);
+		}
+	}
+
 	return (
-		<UserWrapper>
+		<UserWrapper user={user}>
 			<div className="container mx-auto px-2">
-				<h2 className="text-2xl text-center">Checkout</h2>
+				<h2 className="text-6xl text-center my-5">Checkout</h2>
 
 				<div className="max-w-3xl mx-auto space-y-5 mb-5">
 					<div className="space-y-2">
@@ -16,6 +111,14 @@ function Checkout() {
 									name="delivery"
 									className="peer/home hidden"
 									id="home"
+									value={data.method_of_delivery}
+									checked={data.method_of_delivery === "home"}
+									onChange={() =>
+										setData({
+											...data,
+											method_of_delivery: "home",
+										})
+									}
 								/>
 								<label
 									className="flex gap-2 cursor-pointer border peer-checked/home:border-info px-5 py-4 peer-checked/home:text-info rounded-xl"
@@ -46,6 +149,16 @@ function Checkout() {
 									name="delivery"
 									className="peer/pickup hidden"
 									id="pickup"
+									value={data.method_of_delivery}
+									checked={
+										data.method_of_delivery === "pickup"
+									}
+									onChange={() =>
+										setData({
+											...data,
+											method_of_delivery: "pickup",
+										})
+									}
 								/>
 								<label
 									className="flex gap-2 cursor-pointer border peer-checked/pickup:border-info px-5 py-4 peer-checked/pickup:text-info rounded-xl"
@@ -73,9 +186,19 @@ function Checkout() {
 							<div className="md:w-1/3">
 								<input
 									type="radio"
-									name="delivery"
+									name="reserve"
 									className="peer/reserve hidden"
 									id="reserve"
+									value={data.method_of_delivery}
+									checked={
+										data.method_of_delivery === "reserve"
+									}
+									onChange={() =>
+										setData({
+											...data,
+											method_of_delivery: "reserve",
+										})
+									}
 								/>
 								<label
 									className="flex gap-2 cursor-pointer border peer-checked/reserve:border-info px-5 py-4 peer-checked/reserve:text-info rounded-xl"
@@ -101,18 +224,36 @@ function Checkout() {
 							</div>
 						</div>
 					</div>
-					<div className="space-y-2">
-						<h3 className="text-xl">Address</h3>
-						<input
-							type="text"
-							placeholder="Enter address"
-							className="input input-bordered w-full max-w-xs"
-						/>
-					</div>
+					{data.method_of_delivery === "home" && (
+						<div className="space-y-2">
+							<h3 className="text-xl">Address</h3>
+							<input
+								type="text"
+								placeholder="Enter address"
+								className="input input-bordered w-full max-w-xs"
+								value={data.address}
+								onChange={(e) =>
+									setData({
+										...data,
+										address: e.target.value,
+									})
+								}
+							/>
+						</div>
+					)}
 					<div className="space-y-2">
 						<h3 className="text-xl">Payment method</h3>
 						<div>
-							<button className="btn btn-primary gap-5 mb-5 sm:mb-auto mr-5">
+							<button
+								onClick={() =>
+									setData({
+										...data,
+										method_of_payment: "pay-now",
+									})
+								}
+								disabled={data.method_of_payment === "pay-now"}
+								className="btn btn-primary gap-5 mb-5 sm:mb-auto mr-5"
+							>
 								<svg
 									className="w-5 h-5 fill-current"
 									xmlns="http://www.w3.org/2000/svg"
@@ -123,7 +264,16 @@ function Checkout() {
 								</svg>
 								Pay now
 							</button>
-							<button className="btn btn-primary gap-5">
+							<button
+								onClick={() =>
+									setData({
+										...data,
+										method_of_payment: "pay-cash",
+									})
+								}
+								disabled={data.method_of_payment === "pay-cash"}
+								className="btn btn-primary gap-5"
+							>
 								<svg
 									className="w-5 h-5 fill-current"
 									xmlns="http://www.w3.org/2000/svg"
@@ -135,22 +285,85 @@ function Checkout() {
 								Pay with cash
 							</button>
 						</div>
-						<div className="flex gap-2">
-							<svg
-								className="w-5 h-5 fill-success"
-								xmlns="http://www.w3.org/2000/svg"
-								viewBox="0 0 512 512"
-							>
-								{/*! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. */}
-								<path d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z" />
-							</svg>
-							<span className="text-success">
-								Pay on delivery
-							</span>
-						</div>
+						{data.method_of_payment === "pay-now" &&
+							paymentComplete && (
+								<div className="flex gap-2">
+									<svg
+										className="w-5 h-5 fill-success"
+										xmlns="http://www.w3.org/2000/svg"
+										viewBox="0 0 512 512"
+									>
+										{/*! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. */}
+										<path d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z" />
+									</svg>
+									<span className="text-success">
+										Paid now
+									</span>
+								</div>
+							)}
+
+						{data.method_of_payment === "pay-now" &&
+							!paymentComplete && (
+								<div className="flex gap-2">
+									<svg
+										className="w-5 h-5 fill-error"
+										xmlns="http://www.w3.org/2000/svg"
+										width={24}
+										height={24}
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										strokeWidth={2}
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										// className="feather feather-x-circle"
+									>
+										<circle
+											cx={12}
+											cy={12}
+											r={10}
+										/>
+										<line
+											x1={15}
+											y1={9}
+											x2={9}
+											y2={15}
+										/>
+										<line
+											x1={9}
+											y1={9}
+											x2={15}
+											y2={15}
+										/>
+									</svg>
+
+									<span className="text-error">Pay now</span>
+								</div>
+							)}
+						{data.method_of_payment === "pay-cash" && (
+							<div className="flex gap-2">
+								<svg
+									className="w-5 h-5 fill-success"
+									xmlns="http://www.w3.org/2000/svg"
+									viewBox="0 0 512 512"
+								>
+									{/*! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. */}
+									<path d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z" />
+								</svg>
+								<span className="text-success">
+									Pay on delivery
+								</span>
+							</div>
+						)}
 					</div>
 					<div className="divider"></div>
-					<button className="btn btn-primary">Checkout</button>
+
+					<button
+						onClick={checkout}
+						className="btn btn-primary"
+					>
+						Checkout
+					</button>
 				</div>
 			</div>
 		</UserWrapper>
@@ -158,3 +371,18 @@ function Checkout() {
 }
 
 export default Checkout;
+
+export const getServerSideProps = withSessionSsr(
+	async function getServerSideProps({ req }) {
+		const user = req.session.user;
+
+		// const categories = await CategoryModel.find({});
+
+		return {
+			props: {
+				user: user || null,
+				// categories: JSON.parse(JSON.stringify(categories)),
+			},
+		};
+	}
+);

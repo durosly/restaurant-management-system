@@ -1,4 +1,4 @@
-import Image from "next/image";
+// import Image from "next/image";
 import UserWrapper from "../../components/layout/userWrapper";
 import DisplayImages from "../../components/product-details/display-images";
 import ProductInfo from "../../components/product-details/product-info";
