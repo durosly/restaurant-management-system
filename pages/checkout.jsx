@@ -75,6 +75,7 @@ function Checkout({ user }) {
 					message: "Order created",
 				});
 				emptyCart();
+
 				router.push("/order");
 			} else {
 				throw new Error(response.data.msg);
