@@ -1,34 +1,33 @@
+import { DateTime } from "luxon";
+import TodayOrderItems from "../components/order/today-order-items";
 import UserWrapper from "../components/layout/userWrapper";
+import { withSessionSsr } from "../lib/withSession";
+import OrderModel from "../models/order";
 
-function Order() {
+function Order({ user, orders }) {
 	return (
-		<UserWrapper>
+		<UserWrapper user={user}>
 			<div className="container mx-auto px-2">
 				<h2 className="text-2xl text-center">Orders</h2>
 				<ul className="list-none my-5 space-y-4 max-w-lg mx-auto">
-					<li>
-						<div className="card lg:card-side bg-info-content shadow-xl  px-4">
-							<figure>
-								<img
-									className="w-[100px] h-[100px]"
-									src="https://placeimg.com/400/400/arch"
-									alt="Album"
-								/>
-							</figure>
-							<div className="card-body">
-								<h2 className="card-title">
-									Fried rice -{" "}
-									<span className="font-bold">N7,000</span>
-								</h2>
-								<p>10/12/2020</p>
-								<div className="card-actions justify-end">
-									<span className="badge animate-pulse">
-										pending...
-									</span>
+					{orders &&
+						orders.length > 0 &&
+						orders.map((o) => (
+							<>
+								<div className="divider">
+									{DateTime.fromISO(
+										o.created_at
+									).toRelative()}
 								</div>
-							</div>
-						</div>
-					</li>
+								{o.products.map((p) => (
+									<TodayOrderItems
+										key={`${p.id}-${o._id}`}
+										o={o}
+										p={p}
+									/>
+								))}
+							</>
+						))}
 				</ul>
 			</div>
 		</UserWrapper>
@@ -36,3 +35,28 @@ function Order() {
 }
 
 export default Order;
+
+export const getServerSideProps = withSessionSsr(
+	async function getServerSideProps({ req }) {
+		const user = req.session.user;
+
+		const today = new Date();
+		const date = `${today.getFullYear()}-${
+			today.getMonth() + 1
+		}-${today.getDate()}`;
+		const orders = await OrderModel.find({
+			created_at: { $gte: date },
+		}).sort({ created_at: 1 });
+
+		console.log(orders);
+
+		// const categories = await CategoryModel.find({});
+
+		return {
+			props: {
+				user: user || null,
+				orders: JSON.parse(JSON.stringify(orders)),
+			},
+		};
+	}
+);
