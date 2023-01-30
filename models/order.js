@@ -23,6 +23,7 @@ const orderSchema = new mongoose.Schema({
 			_productId: String,
 			price: String,
 			quantity: Number,
+			hasReview: { type: Boolean, default: false },
 		},
 	],
 	created_at: { type: Date, default: Date.now },

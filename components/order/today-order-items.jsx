@@ -17,6 +17,8 @@ function TodayOrderItems({ o, p }) {
 		price: null,
 	});
 
+	const [rating, setRating] = useState({ rate: 1, remark: "" });
+
 	console.log(o);
 
 	useEffect(() => {
@@ -120,6 +122,118 @@ function TodayOrderItems({ o, p }) {
 						>
 							{o.status}
 						</span>
+						{o.status === "pending" && !p.hasReview && (
+							<div className="review">
+								{/* The button to open modal */}
+								<label
+									htmlFor="my-modal-4"
+									className="btn btn-sm"
+								>
+									Review
+								</label>
+
+								{/* Put this part before </body> tag */}
+								<input
+									type="checkbox"
+									id="my-modal-4"
+									className="modal-toggle"
+								/>
+								<label
+									htmlFor="my-modal-4"
+									className="modal cursor-pointer"
+								>
+									<label
+										className="modal-box relative"
+										htmlFor=""
+									>
+										<h3 className="text-lg font-bold">
+											Review {info.name}
+										</h3>
+										<form className="space-y-4 py-4">
+											<div className="rating">
+												<input
+													type="radio"
+													name="rating-1"
+													className="mask mask-star"
+													checked={rating.rate === 1}
+													onChange={() =>
+														setRating({
+															...rating,
+															rate: 1,
+														})
+													}
+												/>
+												<input
+													type="radio"
+													name="rating-1"
+													className="mask mask-star"
+													checked={rating.rate === 2}
+													onChange={() =>
+														setRating({
+															...rating,
+															rate: 2,
+														})
+													}
+												/>
+												<input
+													type="radio"
+													name="rating-1"
+													className="mask mask-star"
+													checked={rating.rate === 3}
+													onChange={() =>
+														setRating({
+															...rating,
+															rate: 3,
+														})
+													}
+												/>
+												<input
+													type="radio"
+													name="rating-1"
+													className="mask mask-star"
+													checked={rating.rate === 4}
+													onChange={() =>
+														setRating({
+															...rating,
+															rate: 4,
+														})
+													}
+												/>
+												<input
+													type="radio"
+													name="rating-1"
+													className="mask mask-star"
+													checked={rating.rate === 5}
+													onChange={() =>
+														setRating({
+															...rating,
+															rate: 5,
+														})
+													}
+												/>
+											</div>
+											<div className="form-control">
+												<textarea
+													className="textarea textarea-bordered"
+													placeholder="Remark"
+													value={rating.remark}
+													onChange={(e) =>
+														setRating({
+															...rating,
+															remark: e.target
+																.value,
+														})
+													}
+												/>
+											</div>
+											<button className="btn btn-sm btn-primary">
+												Submit
+											</button>
+										</form>
+									</label>
+								</label>
+							</div>
+						)}
 					</div>
 				</div>
 			</div>
