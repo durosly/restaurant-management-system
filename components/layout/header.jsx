@@ -82,6 +82,20 @@ function Header({ user }) {
 						<li>
 							<Link href="/faq">FAQ</Link>
 						</li>
+						<li>
+							<Link href="/order">Orders</Link>
+						</li>
+						<li>
+							<Link
+								href="/cart"
+								className="indicator"
+							>
+								<span className="indicator-item indicator-middle badge badge-secondary">
+									{count}
+								</span>
+								Cart
+							</Link>
+						</li>
 					</ul>
 				</div>
 				<a className="btn btn-ghost normal-case text-xl">DSpecials</a>
@@ -96,6 +110,9 @@ function Header({ user }) {
 					</li>
 					<li>
 						<Link href="/faq">FAQ</Link>
+					</li>
+					<li>
+						<Link href="/order">Orders</Link>
 					</li>
 					<li>
 						<Link
