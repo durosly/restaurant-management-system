@@ -58,7 +58,9 @@ async function handler(req, res) {
 
 			for (const item of items) {
 				await FoodModel.findByIdAndUpdate(item.id, {
-					$inc: { quantity: -item.quantity },
+					$inc: {
+						number_of_item: -item.quantity,
+					},
 				});
 			}
 
