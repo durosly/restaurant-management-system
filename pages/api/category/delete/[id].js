@@ -1,11 +1,11 @@
-import mongoose from "mongoose";
 import { withSessionRoute } from "../../../../lib/withSession";
 import CategoryModel from "../../../../models/category";
+import FoodModel from "../../../../models/food";
 
 async function handler(req, res) {
 	if (req.method === "DELETE") {
 		try {
-			await mongoose.connect(process.env.MONGODB_URL);
+			// await mongoose.connect(process.env.MONGODB_URL);
 			const { id } = req.query;
 
 			const { user } = req.session;
@@ -19,6 +19,8 @@ async function handler(req, res) {
 			const category = await CategoryModel.findOneAndDelete({ _id: id });
 
 			if (!category) throw new Error("Category does not exist");
+
+			await FoodModel.updateMany({}, { $pull: { _categoriesIds: id } });
 
 			// await user.save();
 			res.status(200).json({
