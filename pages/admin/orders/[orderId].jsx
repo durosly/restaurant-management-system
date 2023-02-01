@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { withSessionSsr } from "../../../lib/withSession";
 import AppContext from "../../../store/AppContext";
 import AdminWrapper from "../../../components/layout/admin/layout/adminWrapper";
 
@@ -67,7 +68,7 @@ function OrderDetails() {
 				// console.log(productId);
 
 				if (response.data.ok) {
-					console.log(response.data);
+					// console.log(response.data);
 					setData(response.data.order);
 					setCustomer(response.data.customer);
 					setStatus(response.data.order.status);
@@ -225,3 +226,22 @@ function OrderDetails() {
 }
 
 export default OrderDetails;
+
+export const getServerSideProps = withSessionSsr(handler);
+
+async function handler({ req }) {
+	const user = req.session.user;
+
+	if (!user || user.type !== "admin") {
+		return {
+			redirect: {
+				destination: "/",
+				permanent: false,
+			},
+		};
+	}
+
+	return {
+		props: {},
+	};
+}

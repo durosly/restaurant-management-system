@@ -41,9 +41,12 @@ function Orders({ order }) {
 									<td>
 										<Link
 											href={`/admin/orders/${o.id}`}
-											className="btn btn-sm btn-primary"
+											className="btn btn-sm btn-primary relative"
 										>
-											view order
+											view order{" "}
+											{o.seen === false && (
+												<span className="w-2 h-2 ml-2 rounded-full bg-success absolute top-1 right-1"></span>
+											)}
 										</Link>
 									</td>
 								</tr>
@@ -86,6 +89,7 @@ async function handler({ req }) {
 			status: item.status,
 			datetime: item.created_at,
 			number_of_item: item.products.length,
+			seen: item.seen,
 		});
 	}
 

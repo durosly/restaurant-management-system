@@ -18,6 +18,11 @@ async function handler(req, res) {
 
 			if (!order) throw new Error("Order not found");
 
+			if (user.type === "admin") {
+				order.seen = true;
+				await order.save();
+			}
+
 			const customer = await UserModel.findById(order._userId);
 
 			res.status(200).json({

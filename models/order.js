@@ -30,6 +30,7 @@ const orderSchema = new mongoose.Schema({
 	address: String,
 	totalPrice: Number,
 	reference: String,
+	seen: { type: Boolean, default: false },
 });
 
 const OrderModel =
