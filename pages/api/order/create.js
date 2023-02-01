@@ -1,6 +1,7 @@
 import { withSessionRoute } from "../../../lib/withSession";
 // import CategoryModel from "../../../models/category";
 import OrderModel from "../../../models/order";
+import FoodModel from "../../../models/food";
 
 async function handler(req, res) {
 	if (req.method === "POST") {
@@ -26,7 +27,7 @@ async function handler(req, res) {
 				throw new Error("Please, select a method of delivery");
 			} else if (!method_of_payment) {
 				throw new Error("Please, select a method of payment");
-			} else if (!address) {
+			} else if (method_of_delivery === "home" && !address) {
 				throw new Error("Address cannot be empty");
 			} else if (!reference) {
 				throw new Error(
@@ -54,6 +55,12 @@ async function handler(req, res) {
 				totalPrice: total,
 				_userId: user.type === "admin" ? req.body.userId : user.id,
 			});
+
+			for (const item of items) {
+				await FoodModel.findByIdAndUpdate(item.id, {
+					$inc: { quantity: -item.quantity },
+				});
+			}
 
 			res.status(200).json({
 				ok: true,

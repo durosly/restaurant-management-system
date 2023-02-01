@@ -46,7 +46,7 @@ export const getServerSideProps = withSessionSsr(
 	async function getServerSideProps({ req }) {
 		const user = req.session.user;
 
-		const orders = await OrderModel.find({}).sort({ created_at: 1 });
+		const orders = await OrderModel.find({}).sort({ created_at: -1 });
 
 		// const categories = await CategoryModel.find({});
 
