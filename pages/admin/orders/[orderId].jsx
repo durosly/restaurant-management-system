@@ -10,9 +10,53 @@ function OrderDetails() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [data, setData] = useState({});
 	const [customer, setCustomer] = useState({});
+	const [status, setStatus] = useState("pending");
+	const [isUpdating, setIsUpdating] = useState(false);
 	const {
 		toast: { showToast },
 	} = useContext(AppContext);
+
+	async function updateStatus(e) {
+		e.preventDefault();
+
+		if (isUpdating) return;
+		// console.log("...fired...");
+
+		setIsUpdating(true);
+		try {
+			const response = await axios.put(
+				`/api/order/${orderId}/update-status`,
+				{ status }
+			);
+
+			// console.log(productId);
+
+			if (response.data.ok) {
+				// console.log(response.data);
+				showToast({
+					alert_type: "success",
+					message: "Status updated",
+				});
+				setIsUpdating(false);
+			} else {
+				throw new Error(response.data.msg);
+			}
+		} catch (error) {
+			setIsUpdating(false);
+			let errorMsg = "";
+
+			if (error?.response) {
+				errorMsg = error.response.data.msg;
+			} else {
+				errorMsg = error.message;
+			}
+
+			showToast({
+				alert_type: "danger",
+				message: errorMsg,
+			});
+		}
+	}
 
 	useEffect(() => {
 		async function loadData() {
@@ -26,7 +70,10 @@ function OrderDetails() {
 					console.log(response.data);
 					setData(response.data.order);
 					setCustomer(response.data.customer);
+					setStatus(response.data.order.status);
 					setIsLoading(false);
+				} else {
+					throw new Error(response.data.msg);
 				}
 			} catch (error) {
 				let errorMsg = "";
@@ -45,7 +92,7 @@ function OrderDetails() {
 		}
 
 		loadData();
-	}, []);
+	}, [orderId]);
 
 	return (
 		<AdminWrapper>
@@ -67,7 +114,7 @@ function OrderDetails() {
 							Date:{" "}
 							<span className="font-bold">10/12/2023 4:00pm</span>
 						</p>
-						<div>
+						<div className="space-y-2">
 							<h3>Products</h3>
 							<ul className="list-disc list-inside">
 								{data &&
@@ -117,25 +164,57 @@ function OrderDetails() {
 							<span className="font-bold">{data.address}</span>
 						</p>
 						<div className="divider">Update Order Status</div>
-						<form action="/order-status">
+						<form
+							onSubmit={updateStatus}
+							action="/order-status"
+						>
 							<div className="form-control w-full max-w-xs">
 								<label className="label">Status</label>
-								<select className="select select-bordered">
+								<select
+									value={status}
+									onChange={(e) => setStatus(e.target.value)}
+									className="select select-bordered"
+								>
 									<option
 										disabled
-										selected
+										value="pending"
 									>
-										Pick one
+										Pending
 									</option>
-									<option>Star Wars</option>
-									<option>Harry Potter</option>
-									<option>Lord of the Rings</option>
-									<option>Planet of the Apes</option>
-									<option>Star Trek</option>
+									<option
+										disabled={
+											status === "successful" ||
+											status === "delivering" ||
+											status === "preparing"
+										}
+										value="preparing"
+									>
+										Preparing
+									</option>
+									<option
+										disabled={
+											status === "successful" ||
+											status === "delivering"
+										}
+										value="delivering"
+									>
+										Delivering
+									</option>
+									<option
+										disabled={status === "successful"}
+										value="successful"
+									>
+										Successful
+									</option>
 								</select>
 							</div>
-							<button className="btn btn-primary mt-4">
-								Update
+							<button
+								disabled={isUpdating || status === "successful"}
+								className={`btn btn-primary mt-4 disabled:cursor-not-allowed ${
+									isUpdating && "animate-pulse"
+								}`}
+							>
+								{isUpdating ? "Loading..." : "Update"}
 							</button>
 						</form>
 					</>
