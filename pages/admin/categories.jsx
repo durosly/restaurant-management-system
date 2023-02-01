@@ -4,6 +4,7 @@ import AppContext from "../../store/AppContext";
 import AdminWrapper from "../../components/layout/admin/layout/adminWrapper";
 import { withSessionSsr } from "../../lib/withSession";
 import CategoryModel from "../../models/category";
+import FoodModel from "../../models/food";
 
 function Categories({ categoriesData }) {
 	const {
@@ -258,11 +259,23 @@ async function handler({ req }) {
 
 	const categoriesDB = await CategoryModel.find({});
 
-	const categories = categoriesDB.map((category) => ({
-		id: category.id,
-		name: category.name,
-		numberOfFood: 0,
-	}));
+	const categories = [];
+
+	// const categories = categoriesDB.map((category) => ({
+	// 	id: category.id,
+	// 	name: category.name,
+	// 	numberOfFood: 0,
+	// }));
+
+	for (const c of categoriesDB) {
+		const food = await FoodModel.find({ _categoriesIds: c.id });
+
+		categories.push({
+			id: c.id,
+			name: c.name,
+			numberOfFood: food.length,
+		});
+	}
 
 	return {
 		props: {
