@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema({
 	_userId: String,
+	code: { type: String, default: "DS12345" },
 	method_of_delivery: {
 		type: String,
 		enum: ["home", "pickup", "reserve"],

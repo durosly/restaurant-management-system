@@ -56,6 +56,13 @@ async function handler(req, res) {
 				_userId: user.type === "admin" ? req.body.userId : user.id,
 			});
 
+			const code = `${user.firstname[0].toUpperCase()}${user.lastname[0].toUpperCase()}${order.id
+				.slice(order.id.length - 6)
+				.toUpperCase()}`;
+
+			order.code = code;
+			await order.save();
+
 			for (const item of items) {
 				await FoodModel.findByIdAndUpdate(item.id, {
 					$inc: {

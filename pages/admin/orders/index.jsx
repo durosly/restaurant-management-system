@@ -1,13 +1,83 @@
+import { useState, useEffect, useContext, useRef } from "react";
 import { DateTime } from "luxon";
 import Link from "next/link";
+import axios from "axios";
 import AdminWrapper from "../../../components/layout/admin/layout/adminWrapper";
 import { withSessionSsr } from "../../../lib/withSession";
 import UserModel from "../../../models/user";
 import OrderModel from "../../../models/order";
+import AppContext from "../../../store/AppContext";
 
 function Orders({ order }) {
+	const {
+		toast: { showToast },
+	} = useContext(AppContext);
+	const [orderData, setOrderData] = useState(order);
+	const [query, setQuery] = useState("");
+	const [isQuerying, setIsQuerying] = useState(false);
+	const cancelToken = useRef(axios.CancelToken.source());
+
+	useEffect(() => {
+		async function loadOrders() {
+			if (query.trim().length < 1) {
+				setOrderData(order);
+				return;
+			}
+
+			try {
+				setIsQuerying(true);
+				const response = await axios(`/api/order/${query}/get-by-code`);
+
+				if (response.data.ok) {
+					setOrderData(response.data.order);
+					setIsQuerying(false);
+				} else {
+					throw new Error(response.data.msg);
+				}
+			} catch (error) {
+				setOrderData([]);
+				setIsQuerying(false);
+				let errorMsg = "";
+
+				if (error?.response) {
+					errorMsg = error.response.data.msg;
+				} else {
+					errorMsg = error.message;
+				}
+
+				showToast({
+					alert_type: "danger",
+					message: errorMsg,
+				});
+			}
+		}
+
+		loadOrders();
+
+		return () => {
+			cancelToken.current.cancel();
+		};
+	}, [query]);
+
 	return (
 		<AdminWrapper>
+			<form action="/search-order">
+				<input
+					type="search"
+					name="search"
+					id="search"
+					className="input input-bordered w-full max-w-xs"
+					placeholder="Search orders using code..."
+					value={query}
+					onChange={(e) => setQuery(e.target.value)}
+				/>
+				{isQuerying && (
+					<div
+						className="radial-progress w-8 h-8 ml-4 animate-spin"
+						style={{ "--value": 70 }}
+					></div>
+				)}
+			</form>
 			<div className="overflow-x-auto">
 				<table className="table w-full">
 					<thead>
@@ -21,9 +91,9 @@ function Orders({ order }) {
 						</tr>
 					</thead>
 					<tbody>
-						{order &&
-							order.length > 0 &&
-							order.map((o, i) => (
+						{orderData &&
+							orderData.length > 0 &&
+							orderData.map((o, i) => (
 								<tr key={o.id}>
 									<th>{i + 1}</th>
 									<td>{o.user}</td>
